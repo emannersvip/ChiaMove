@@ -2,6 +2,8 @@
 
 # Author: Edson Manners
 
+# Install smbclient on Ubuntu
+# sudo apt install smbclient
 import subprocess
 
 def checkForPlots():
