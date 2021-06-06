@@ -1,5 +1,7 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
+# Author: Edson Manners
+
 import subprocess
 
 def checkForPlots():
