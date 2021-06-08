@@ -1,5 +1,7 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
+#smbclient //THREELEAF-LEFT/ChiaFin -U "Edson Manners%L3m0ns&P3ach3s" -c "get plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot /media/emanners/WindowsChiaFinal/ChiaFinal/plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot.bob"
+
 # Author: Edson Manners
 
 # Install smbclient on Ubuntu
