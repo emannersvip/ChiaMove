@@ -8,9 +8,9 @@
 # sudo apt install smbclient
 import subprocess
 
-def checkForPlots():
+def checkForPlots(os):
     print('Hello fron CheckForPlots')
-    if isPlotDirEmpty():
+    if isPlotDirEmpty(os):
         return 0
     else:
         print("Copying plots")
@@ -33,11 +33,24 @@ def copyPlotsToFarmer():
         print(command2)
         #result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     return 1
-def isPlotDirEmpty():
+def isPlotDirEmpty(os):
     print('Hello fron isPlotDirEmtpy')
-    command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls -l ' + getPlotDir(plotter) + ' | wc -l\''
+    if os == 'Linux':
+        command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls -l ' + getPlotDir(plotter) + ' | wc -l\''
+    elif os == 'Windows':
+        print('smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"')
+        command = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"'
+    else:
+        print('No OS defined... leaving')
+
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     num_plots,err = result.communicate()
+    # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
+    # I should just use this check for Linux in the future since this way works better for both OSes.
+    if os == 'Windows':
+        parse_result = str(num_plots).split('\\n')
+        if str(num_plots).split('\\n')[2].find('plot'):
+            num_plots = 1
     #Plot directory not empty
     if int(num_plots) > 0:
         print("Found plots")
@@ -46,28 +59,33 @@ def isPlotDirEmpty():
     else:
         print("No plots to copy!!")
         return 1
+
 def getHost(a):
     return a.split('::')[0]
 def getPlotDir(b):
-    return b.split('::')[1]
+    return b.split('::')[2]
 def getPlotFullPath(c):
     #print('Hello fron getPlotFullPath')
     plot_array = str(c).split('\\n')
     return plot_array
 def getPlotFile(d):
     return d.split('FinChia/')[1]
+def getPlotOS(e):
+    print('Hello fron getPlotOS')
+    return e.split('::')[1]
 
 #--------------------------- MAIN PART of the Code -------------------------#
 # List of plotters
-#plotters = ['ThreeLeaf-Left::C:/Users/emanners/Chia','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
-#plotters = ['ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
-plotters = ['192.168.1.85::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia/plot*']
+#plotters = ['ThreeLeaf-Left::Windows::/ChiaTmp','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
+#plotters = ['ThreeLeaf-Right::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
+#plotters = ['192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia/plot*']
+plotters = ['192.168.1.50::Windows::ChiaFin/']
 # Harvestor Final Plot Directory
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 
 for plotter in plotters:
     print(plotter)
-    if checkForPlots():
+    if checkForPlots(getPlotOS(plotter)):
       copyPlotsToFarmer()
     else:
       next
