@@ -57,6 +57,8 @@ def copyPlotsToFarmer(os):
 #smbclient //THREELEAF-LEFT/ChiaFin -U "Edson Manners%L3m0ns&P3ach3s" -c "get plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot /media/emanners/WindowsChiaFinal/ChiaFinal/plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot.bob"
         print(command2)
         result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        copy_status,err = result.communicate()
+        print(copy_status)
     return 1
 
 def isPlotDirEmpty(os):
