@@ -15,24 +15,50 @@ def checkForPlots(os):
     else:
         print("Copying plots")
         return 1
-def copyPlotsToFarmer():
+def copyPlotsToFarmer(os):
     print('Hello fron copyPlotsToFarmer')
-    command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
+    if os == 'Linux':
+        command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
+    elif os == 'Windows':
+        command = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"'
+    else:
+        print('No OS defined... leaving')
+
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     num_plots,err = result.communicate()
     plot_list = getPlotFullPath(num_plots)
     # We need to do some cleanup
     # First we remove the first 2 characters from the first index in the array.
     plot_list[0] = plot_list[0][2:]
-    # Second we remove/pop the last index from the array.
-    del plot_list[-1]
+
+    if os == 'Linux':
+        # Second we remove/pop the last index from the array.
+        del plot_list[-1]
+    elif os == 'Windows':
+        # Remove the current and parent working directory and last 4 useless entries in the array.
+        del plot_list[0]
+        del plot_list[0]
+        del plot_list[-1]
+        del plot_list[-1]
+        del plot_list[-1]
+        #Clean up the strinmg to just get the individual plot file names.
+        for plot_file in range(0, len(plot_list)):
+            plot_list[plot_file] = plot_list[plot_file].split()[0]
+            #print(plot_list[plot_file])
+    else:
+        print('No OS defined... leaving')
 
     print('\nCopying plots with temorary names....')
     for src_plot in plot_list:
-        command2= 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
+        if os == 'Linux':
+            command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
+        elif os == 'Windows':
+            command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + src_plot + '.bob"'
+#smbclient //THREELEAF-LEFT/ChiaFin -U "Edson Manners%L3m0ns&P3ach3s" -c "get plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot /media/emanners/WindowsChiaFinal/ChiaFinal/plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot.bob"
         print(command2)
-        #result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     return 1
+
 def isPlotDirEmpty(os):
     print('Hello fron isPlotDirEmtpy')
     if os == 'Linux':
@@ -86,7 +112,7 @@ harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 for plotter in plotters:
     print(plotter)
     if checkForPlots(getPlotOS(plotter)):
-      copyPlotsToFarmer()
+      copyPlotsToFarmer(getPlotOS(plotter))
     else:
       next
 
