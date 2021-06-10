@@ -1,6 +1,13 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
-#smbclient //THREELEAF-LEFT/ChiaFin -U "Edson Manners%L3m0ns&P3ach3s" -c "get plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot /media/emanners/WindowsChiaFinal/ChiaFinal/plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot.bob"
+# Read all plots already copied and skip/delete the source
+#f = open("demofile2.txt", "a")
+#f.write("Now the file has more content!")
+#f.close()
+
+##open and read the file after the appending:
+#f = open("demofile2.txt", "r")
+#print(f.read())
 
 # Author: Edson Manners
 
