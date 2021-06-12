@@ -16,6 +16,7 @@ def checkForPlots(os):
         return 1
 def copyPlotsToFarmer(os):
     print('Hello fron copyPlotsToFarmer')
+    # Get list of plots on Plotter
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
     elif os == 'Windows':
@@ -48,8 +49,11 @@ def copyPlotsToFarmer(os):
         print('No OS defined... leaving')
 
     print('\nCopying plots with temporary names....')
+
+    # Check for stale plots then copy the rest
     for src_plot in plot_list:
         # Check if this plot is already been copied and print it for manual deletion
+        print(src_plot)
         if os == 'Linux':
           if isStalePlot(getPlotFile(src_plot)):
             print(getPlotFile(src_plot) + "... Exists on the Harvestor, skipping. Please delete from Source!")
@@ -60,13 +64,21 @@ def copyPlotsToFarmer(os):
             continue
         # Create command to copy file to Harvestor
         if os == 'Linux':
-            command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
+            command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob'
         elif os == 'Windows':
-            command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + src_plot + '.bob"'
+            command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' ' + harvestorPlotDir + '/' + src_plot + '.bob"'
+        # Copy the plot
         print(command2)
         result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         copy_status,err = result.communicate()
         print(copy_status)
+        # Rename the plot
+        if os == 'Linux':
+          print('mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + getPlotFile(src_plot))
+          #command3 = 'mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + getPlotFile(src_plot)
+        if os == 'Windows':
+          print('mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + src_plot)
+          #command3 = 'mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + src_plot
     return 1
 
 def isPlotDirEmpty(os):
@@ -113,7 +125,7 @@ def getPlotFullPath(c):
     plot_array = str(c).split('\\n')
     return plot_array
 def getPlotFile(d):
-    return d.split('FinChia/')[1]
+    return d.split('ChiaFin/')[1]
 def getPlotOS(e):
     print('Hello fron getPlotOS')
     return e.split('::')[1]
@@ -122,6 +134,7 @@ def cleanCMDOutput(f):
     del f[-1]
     return f
 def isStalePlot(g):
+    print('Hello fron isStalePlot')
     if g in harvestorPlotArray:
       return 1
     else:
@@ -132,8 +145,8 @@ def isStalePlot(g):
 # List of plotters
 #plotters = ['ThreeLeaf-Left::Windows::/ChiaTmp','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
 #plotters = ['ThreeLeaf-Right::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
-#plotters = ['192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia/plot*']
-plotters = ['192.168.1.50::Windows::ChiaFin/']
+#--
+plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
 # Harvestor Final Plot Directory
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 harvestorPlotArray = []
