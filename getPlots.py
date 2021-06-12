@@ -61,9 +61,8 @@ def copyPlotsToFarmer(os):
             command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
         elif os == 'Windows':
             command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + src_plot + '.bob"'
-#smbclient //THREELEAF-LEFT/ChiaFin -U "Edson Manners%L3m0ns&P3ach3s" -c "get plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot /media/emanners/WindowsChiaFinal/ChiaFinal/plot-k32-2021-06-02-10-18-f9204d0c78d3088efb86be588867d7287e9e75dea048cab8750941b3fdefacfa.plot.bob"
         print(command2)
-        result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        #result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         copy_status,err = result.communicate()
         print(copy_status)
     return 1
@@ -95,6 +94,14 @@ def isPlotDirEmpty(os):
         print("No plots to copy!!")
         return 1
 
+def checkForStalePlots():
+    print('Hello fron checkForStalePlots')
+    # Create an array of all of the current plots
+    command = 'ls -l ' + harvestorPlotDir + ' | tr -s " " | cut -d " " -f9'
+    result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    farmPlotArray,err = result.communicate()
+    permPlots = cleanCMDOutput(str(farmPlotArray).split('\\n'))
+    return permPlots
 def getHost(a):
     return a.split('::')[0]
 def getPlotDir(b):
@@ -108,6 +115,11 @@ def getPlotFile(d):
 def getPlotOS(e):
     print('Hello fron getPlotOS')
     return e.split('::')[1]
+def cleanCMDOutput(f):
+    del f[0]
+    del f[-1]
+    return f
+
 
 #--------------------------- MAIN PART of the Code -------------------------#
 # List of plotters
@@ -117,10 +129,14 @@ def getPlotOS(e):
 plotters = ['192.168.1.50::Windows::ChiaFin/']
 # Harvestor Final Plot Directory
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
+harvestorPlotArray = []
 
 for plotter in plotters:
     print(plotter)
+    # Check if plots new plots exist
     if checkForPlots(getPlotOS(plotter)):
+      # If new plots exist, create an array of current plots then copy new ones to the farmer
+      harvestorPlotArray = checkForStalePlots()
       copyPlotsToFarmer(getPlotOS(plotter))
     else:
       next
