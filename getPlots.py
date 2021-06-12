@@ -1,6 +1,7 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
 # Author: Edson Manners
+# TODO: Enable copying from both harvestors
 
 # Install smbclient on Ubuntu
 # sudo apt install smbclient
