@@ -1,14 +1,5 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
-# Read all plots already copied and skip/delete the source
-#f = open("demofile2.txt", "a")
-#f.write("Now the file has more content!")
-#f.close()
-
-##open and read the file after the appending:
-#f = open("demofile2.txt", "r")
-#print(f.read())
-
 # Author: Edson Manners
 
 # Install smbclient on Ubuntu
@@ -60,21 +51,21 @@ def copyPlotsToFarmer(os):
         # Check if this plot is already been copied and print it for manual deletion
         if os == 'Linux':
           if isStalePlot(getPlotFile(src_plot)):
-            print(getPlotFile(src_plot) + "Exists on Harvestor")
+            print(getPlotFile(src_plot) + "... Exists on the Harvestor, skipping. Please delete from Source!")
             continue
         elif os == 'Windows':
           if isStalePlot(src_plot):
-            print(src_plot)
+            print(src_plot + "... Exists on the Harvestor, skipping. Please delete from Source!") 
             continue
         # Create command to copy file to Harvestor
         if os == 'Linux':
             command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
         elif os == 'Windows':
             command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + src_plot + '.bob"'
-        #print(command2)
-        #result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        #copy_status,err = result.communicate()
-        #print(copy_status)
+        print(command2)
+        result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        copy_status,err = result.communicate()
+        print(copy_status)
     return 1
 
 def isPlotDirEmpty(os):
@@ -130,7 +121,6 @@ def cleanCMDOutput(f):
     del f[-1]
     return f
 def isStalePlot(g):
-    print(g)
     if g in harvestorPlotArray:
       return 1
     else:
