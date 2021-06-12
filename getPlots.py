@@ -55,16 +55,26 @@ def copyPlotsToFarmer(os):
     else:
         print('No OS defined... leaving')
 
-    print('\nCopying plots with temorary names....')
+    print('\nCopying plots with temporary names....')
     for src_plot in plot_list:
+        # Check if this plot is already been copied and print it for manual deletion
+        if os == 'Linux':
+          if isStalePlot(getPlotFile(src_plot)):
+            print(getPlotFile(src_plot) + "Exists on Harvestor")
+            continue
+        elif os == 'Windows':
+          if isStalePlot(src_plot):
+            print(src_plot)
+            continue
+        # Create command to copy file to Harvestor
         if os == 'Linux':
             command2 = 'scp ' + getHost(plotter) + ':' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + getPlotFile(src_plot) + '.bob'
         elif os == 'Windows':
             command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' /media/emanners/WindowsChiaFinal/ChiaFinal/' + src_plot + '.bob"'
-        print(command2)
+        #print(command2)
         #result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        copy_status,err = result.communicate()
-        print(copy_status)
+        #copy_status,err = result.communicate()
+        #print(copy_status)
     return 1
 
 def isPlotDirEmpty(os):
@@ -119,6 +129,12 @@ def cleanCMDOutput(f):
     del f[0]
     del f[-1]
     return f
+def isStalePlot(g):
+    print(g)
+    if g in harvestorPlotArray:
+      return 1
+    else:
+      return 0
 
 
 #--------------------------- MAIN PART of the Code -------------------------#
