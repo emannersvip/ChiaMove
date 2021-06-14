@@ -6,6 +6,7 @@
 # Install smbclient on Ubuntu
 # sudo apt install smbclient
 import subprocess
+import logging
 
 def checkForPlots(os):
     print('Hello fron CheckForPlots')
@@ -60,7 +61,7 @@ def copyPlotsToFarmer(os):
             continue
         elif os == 'Windows':
           if isStalePlot(src_plot):
-            print(src_plot + "... Exists on the Harvestor, skipping. Please delete from Source!") 
+            print(src_plot + "... Exists on the Harvestor, skipping. Please delete from Source!")
             continue
         # Create command to copy file to Harvestor
         if os == 'Linux':
@@ -160,5 +161,3 @@ for plotter in plotters:
       copyPlotsToFarmer(getPlotOS(plotter))
     else:
       next
-
-
