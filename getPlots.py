@@ -99,7 +99,7 @@ def isPlotDirEmpty(os):
     returnCode = result.poll()
     print(returnCode)
     return
-    
+
     #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
     # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
@@ -160,7 +160,7 @@ plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emann
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 harvestorPlotArray = []
 #
-logging.basicConfig(filename='getPlots.log', encoding='utf-8', level=logging)
+logging.basicConfig(filename='getPlots.log', encoding='utf-8', level='logging')
 
 for plotter in plotters:
     print(plotter)
