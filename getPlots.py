@@ -7,6 +7,7 @@
 # sudo apt install smbclient
 # --
 # https://docs.python.org/3/howto/logging.html
+# https://realpython.com/python-logging/
 import logging
 import subprocess
 #import sleep from time
@@ -14,7 +15,8 @@ import time
 # --
 
 def checkForPlots(os):
-    print('Hello fron CheckForPlots')
+    #print('Hello fron CheckForPlots')
+    logging.debug('Hello fron CheckForPlots')
     if isPlotDirEmpty(os):
         return 0
     else:
@@ -22,6 +24,7 @@ def checkForPlots(os):
         return 1
 def copyPlotsToFarmer(os):
     # print('Hello fron copyPlotsToFarmer')
+    logging.debug('Hello fron copyPlotsToFarmer')
     # Get list of plots on Plotter
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
@@ -89,10 +92,11 @@ def copyPlotsToFarmer(os):
 
 def isPlotDirEmpty(os):
     #print('Hello fron isPlotDirEmtpy')
+    logging.debug('Hello fron isPlotDirEmtpy')
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls -l ' + getPlotDir(plotter) + ' | wc -l\''
     elif os == 'Windows':
-        logging.info('smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"')
+        logging.info(getTimeStamp() + ' : smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"')
         command = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"'
     else:
         print('No OS defined... leaving')
@@ -100,16 +104,12 @@ def isPlotDirEmpty(os):
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     returnCode = result.poll()
 
-    if 'None' in str(returnCode):
-        time.sleep(5)
-        returnCode = result.poll()
-        print(returnCode)
-    else:
-        
-
-    print(returnCode)
     #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
+    print(num_plots)
+    if not num_plots:
+        return 1
+
     # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
     # I should just use this check for Linux in the future since this way works better for both OSes.
     if os == 'Windows':
@@ -126,7 +126,8 @@ def isPlotDirEmpty(os):
         return 1
 
 def checkForStalePlots():
-    print('Hello fron checkForStalePlots')
+    #print('Hello fron checkForStalePlots')
+    logging.debug('Hello fron checkForStalePlots')
     # Create an array of all of the current plots
     command = 'ls -l ' + harvestorPlotDir + ' | tr -s " " | cut -d " " -f9'
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -144,7 +145,8 @@ def getPlotFullPath(c):
 def getPlotFile(d):
     return d.split('ChiaFin/')[1]
 def getPlotOS(e):
-    print('Hello fron getPlotOS')
+    #print('Hello fron getPlotOS')
+    logging.debug('Hello fron getPlotOS')
     return e.split('::')[1]
 def cleanCMDOutput(f):
     del f[0]
@@ -156,6 +158,9 @@ def isStalePlot(g):
       return 1
     else:
       return 0
+def getTimeStamp():
+    # https://docs.python.org/3/library/time.html
+    return time.strftime('%b %d %H:%M:%S')
 
 
 #--------------------------- MAIN PART of the Code -------------------------#
@@ -168,7 +173,7 @@ plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emann
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 harvestorPlotArray = []
 #
-## Fix later ## logging.basicConfig(filename='getPlots.log', encoding='utf-8', level='logging')
+logging.basicConfig(filename='getPlots.log', level=logging.DEBUG)
 
 for plotter in plotters:
     print(plotter)
