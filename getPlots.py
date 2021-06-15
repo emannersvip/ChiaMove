@@ -5,8 +5,11 @@
 
 # Install smbclient on Ubuntu
 # sudo apt install smbclient
-import subprocess
+# --
+# https://docs.python.org/3/howto/logging.html
 import logging
+import subprocess
+# --
 
 def checkForPlots(os):
     print('Hello fron CheckForPlots')
@@ -16,7 +19,7 @@ def checkForPlots(os):
         print("Copying plots")
         return 1
 def copyPlotsToFarmer(os):
-    print('Hello fron copyPlotsToFarmer')
+    # print('Hello fron copyPlotsToFarmer')
     # Get list of plots on Plotter
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
@@ -83,16 +86,21 @@ def copyPlotsToFarmer(os):
     return 1
 
 def isPlotDirEmpty(os):
-    print('Hello fron isPlotDirEmtpy')
+    #print('Hello fron isPlotDirEmtpy')
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls -l ' + getPlotDir(plotter) + ' | wc -l\''
     elif os == 'Windows':
-        print('smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"')
+        logging.info('smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"')
         command = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "dir"'
     else:
         print('No OS defined... leaving')
 
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    returnCode = result.poll()
+    print(returnCode)
+    return
+    
+    #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
     # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
     # I should just use this check for Linux in the future since this way works better for both OSes.
@@ -135,7 +143,7 @@ def cleanCMDOutput(f):
     del f[-1]
     return f
 def isStalePlot(g):
-    print('Hello fron isStalePlot')
+    #print('Hello fron isStalePlot')
     if g in harvestorPlotArray:
       return 1
     else:
@@ -151,6 +159,8 @@ plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emann
 # Harvestor Final Plot Directory
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 harvestorPlotArray = []
+#
+logging.basicConfig(filename='getPlots.log', encoding='utf-8', level=logging)
 
 for plotter in plotters:
     print(plotter)
