@@ -9,6 +9,8 @@
 # https://docs.python.org/3/howto/logging.html
 import logging
 import subprocess
+#import sleep from time
+import time
 # --
 
 def checkForPlots(os):
@@ -97,10 +99,15 @@ def isPlotDirEmpty(os):
 
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     returnCode = result.poll()
-    print(returnCode)
-    if 'NT_STATUS_HOST_UNREACHABLE' in returnCode:
-        return 1
 
+    if 'None' in str(returnCode):
+        time.sleep(5)
+        returnCode = result.poll()
+        print(returnCode)
+    else:
+        
+
+    print(returnCode)
     #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
     # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
