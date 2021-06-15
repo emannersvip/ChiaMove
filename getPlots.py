@@ -160,7 +160,7 @@ plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emann
 harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
 harvestorPlotArray = []
 #
-logging.basicConfig(filename='getPlots.log', encoding='utf-8', level='logging')
+## Fix later ## logging.basicConfig(filename='getPlots.log', encoding='utf-8', level='logging')
 
 for plotter in plotters:
     print(plotter)
