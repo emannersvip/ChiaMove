@@ -98,7 +98,8 @@ def isPlotDirEmpty(os):
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     returnCode = result.poll()
     print(returnCode)
-    return
+    if 'NT_STATUS_HOST_UNREACHABLE' in returnCode:
+        return 1
 
     #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
