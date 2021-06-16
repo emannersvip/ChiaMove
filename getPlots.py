@@ -9,22 +9,22 @@
 # https://docs.python.org/3/howto/logging.html
 # https://realpython.com/python-logging/
 import logging
+# https://www.geeksforgeeks.org/python-check-if-a-file-or-directory-exists-2/
+import os
 import subprocess
 #import sleep from time
 import time
 # --
 
 def checkForPlots(os):
-    #print('Hello fron CheckForPlots')
-    logging.debug('Hello fron CheckForPlots')
+    logging.debug(getTimeStamp() + ' : Hello from CheckForPlots')
     if isPlotDirEmpty(os):
         return 0
     else:
         print("Copying plots")
         return 1
 def copyPlotsToFarmer(os):
-    # print('Hello fron copyPlotsToFarmer')
-    logging.debug('Hello fron copyPlotsToFarmer')
+    logging.debug(getTimeStamp() + ' : Hello from copyPlotsToFarmer')
     # Get list of plots on Plotter
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls ' + getPlotDir(plotter) + '\''
@@ -91,8 +91,7 @@ def copyPlotsToFarmer(os):
     return 1
 
 def isPlotDirEmpty(os):
-    #print('Hello fron isPlotDirEmtpy')
-    logging.debug('Hello fron isPlotDirEmtpy')
+    logging.debug(getTimeStamp() + ' : Hello from isPlotDirEmtpy')
     if os == 'Linux':
         command = '/usr/bin/ssh ' + getHost(plotter) + ' \'ls -l ' + getPlotDir(plotter) + ' | wc -l\''
     elif os == 'Windows':
@@ -126,8 +125,7 @@ def isPlotDirEmpty(os):
         return 1
 
 def checkForStalePlots():
-    #print('Hello fron checkForStalePlots')
-    logging.debug('Hello fron checkForStalePlots')
+    logging.debug(getTimeStamp() + ' : Hello from checkForStalePlots')
     # Create an array of all of the current plots
     command = 'ls -l ' + harvestorPlotDir + ' | tr -s " " | cut -d " " -f9'
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -139,21 +137,18 @@ def getHost(a):
 def getPlotDir(b):
     return b.split('::')[2]
 def getPlotFullPath(c):
-    #print('Hello fron getPlotFullPath')
     plot_array = str(c).split('\\n')
     return plot_array
 def getPlotFile(d):
     return d.split('ChiaFin/')[1]
 def getPlotOS(e):
-    #print('Hello fron getPlotOS')
-    logging.debug('Hello fron getPlotOS')
+    logging.debug(getTimeStamp() + ' : Hello from getPlotOS')
     return e.split('::')[1]
 def cleanCMDOutput(f):
     del f[0]
     del f[-1]
     return f
 def isStalePlot(g):
-    #print('Hello fron isStalePlot')
     if g in harvestorPlotArray:
       return 1
     else:
@@ -161,22 +156,34 @@ def isStalePlot(g):
 def getTimeStamp():
     # https://docs.python.org/3/library/time.html
     return time.strftime('%b %d %H:%M:%S')
+def checkHarvestorPlotDir(h):
+    isdir = os.path.isdir(h)
+    if isdir:
+      return h
+    else:
+      print(getTimeStamp() + ' : Harvestor Plot directory does not exist... Exiting!')
+      logging.critical(getTimeStamp() + ' : Harvestor Plot directory does not exist... Exiting!')
+      print(getTimeStamp() + ' : ' + h + ' is missing!')
+      logging.info(getTimeStamp() + ' : ' + h + ' is missing!')
+      logging.info(getTimeStamp() + ' : --------------------------------STOP-------------------------------------')
+      exit()
 
 
 #--------------------------- MAIN PART of the Code -------------------------#
+#
+logging.basicConfig(filename='getPlots.log', level=logging.DEBUG, format='%(message)s - %(levelname)s')
+logging.info(getTimeStamp() + ' : --------------------------------START------------------------------------')
 # List of plotters
 #plotters = ['ThreeLeaf-Left::Windows::/ChiaTmp','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
 #plotters = ['ThreeLeaf-Right::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
 #--
 plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
 # Harvestor Final Plot Directory
-harvestorPlotDir = '/media/emanners/WindowsChiaFinal/ChiaFinal'
+harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
 harvestorPlotArray = []
-#
-logging.basicConfig(filename='getPlots.log', level=logging.DEBUG)
 
 for plotter in plotters:
-    print(plotter)
+    logging.info(getTimeStamp() + ' : ' + plotter)
     # Check if plots new plots exist
     if checkForPlots(getPlotOS(plotter)):
       # If new plots exist, create an array of current plots then copy new ones to the farmer
@@ -184,3 +191,5 @@ for plotter in plotters:
       copyPlotsToFarmer(getPlotOS(plotter))
     else:
       next
+
+logging.info(getTimeStamp() + ' : --------------------------------STOP-------------------------------------')
