@@ -171,8 +171,10 @@ def checkHarvestorPlotDir(h):
 
 #--------------------------- MAIN PART of the Code -------------------------#
 #
+# Change 'logging level' to match the verbosity that required.
 logging.basicConfig(filename='getPlots.log', level=logging.DEBUG, format='%(message)s - %(levelname)s')
 logging.info(getTimeStamp() + ' : --------------------------------START------------------------------------')
+
 # List of plotters
 #plotters = ['ThreeLeaf-Left::Windows::/ChiaTmp','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
 #plotters = ['ThreeLeaf-Right::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
