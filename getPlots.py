@@ -79,17 +79,19 @@ def copyPlotsToFarmer(os):
         elif os == 'Windows':
             command2 = 'smbclient //' + getHost(plotter) + '/' + getPlotDir(plotter) + ' -U "Edson Manners%L3m0ns&P3ach3s" -c "get ' + src_plot + ' ' + harvestorPlotDir + '/' + src_plot + '.bob"'
         # Copy the plot
-        print(command2)
+        #print(command2)
         result = subprocess.Popen(command2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         copy_status,err = result.communicate()
-        print(copy_status)
+        #print(copy_status)
         # Rename the plot
         if os == 'Linux':
-          print('mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + getPlotFile(src_plot))
-          #command3 = 'mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + getPlotFile(src_plot)
-        if os == 'Windows':
-          print('mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + src_plot)
-          #command3 = 'mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + src_plot
+          print('mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + harvestorPlotDir + '/' + getPlotFile(src_plot))
+          command3='mv ' + harvestorPlotDir + '/' + getPlotFile(src_plot) + '.bob ' + harvestorPlotDir + '/' + getPlotFile(src_plot)
+        elif os == 'Windows':
+          print('mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + harvestorPlotDir + '/' + src_plot)
+          command3 = 'mv ' + harvestorPlotDir + '/' + src_plot + '.bob ' + harvestorPlotDir + '/' + src_plot
+        result = subprocess.Popen(command3, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        returnCode = result.poll()
     return 1
 
 def isPlotDirEmpty(os):
@@ -193,7 +195,9 @@ logging.info(getTimeStamp() + ' : --------------------------------START---------
 
 # List of plotters
 # For now *Linux* Plotters MUST use wildcard on the plot directory!!
-plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/*.plot','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/*.plot']
+plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/*.plot',
+            '192.168.1.85::Linux::/media/emanners/6270caab-a194-4e22-9d06-2e4b94d09d58/ChiaFin/*.plot',
+            '192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/*.plot']
 #plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/plot*','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
 # Harvestor Final Plot Directory
 harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
