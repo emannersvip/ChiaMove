@@ -1,7 +1,9 @@
 #!/home/emanners/Crypto/Chia/chia-blockchain/venv/bin/python3
 
 # Author: Edson Manners
-# TODO: Enable copying from both harvestors
+# TODO: Enable copying from both harvestors - DONE
+# TODO: 06182021: Create plotter config file with lists of plotters
+# TODO: 06182021: Make program cp SSH keys on first login
 
 # Install smbclient on Ubuntu
 # sudo apt install smbclient
@@ -64,7 +66,8 @@ def copyPlotsToFarmer(os):
         # Check if this plot is already been copied and print it for manual deletion
         print(src_plot)
         if os == 'Linux':
-          if isStalePlot(getPlotFile(src_plot)):
+          #if isStalePlot(getPlotFile(src_plot)):
+          if isStalePlot(src_plot):
             print(getPlotFile(src_plot) + "... Exists on the Harvestor, skipping. Please delete from Source!")
             continue
         elif os == 'Windows':
@@ -131,15 +134,18 @@ def checkForStalePlots():
     result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     farmPlotArray,err = result.communicate()
     permPlots = cleanCMDOutput(str(farmPlotArray).split('\\n'))
+    logging.debug(getTimeStamp() + ' : We have ' + str(len(permPlots)) + ' plots being farmed.')
     return permPlots
 def getHost(a):
     return a.split('::')[0]
 def getPlotDir(b):
     return b.split('::')[2]
 def getPlotFullPath(c):
+    logging.debug(getTimeStamp() + ' : Hello from getPlotFullPath')
     plot_array = str(c).split('\\n')
     return plot_array
 def getPlotFile(d):
+    logging.debug(getTimeStamp() + ' : Hello from getPlotFile')
     return d.split('ChiaFin/')[1]
 def getPlotOS(e):
     logging.debug(getTimeStamp() + ' : Hello from getPlotOS')
@@ -149,6 +155,7 @@ def cleanCMDOutput(f):
     del f[-1]
     return f
 def isStalePlot(g):
+    logging.debug(getTimeStamp() + ' : Hello from isStalePlot')
     if g in harvestorPlotArray:
       return 1
     else:
@@ -176,16 +183,15 @@ logging.basicConfig(filename='getPlots.log', level=logging.DEBUG, format='%(mess
 logging.info(getTimeStamp() + ' : --------------------------------START------------------------------------')
 
 # List of plotters
-#plotters = ['ThreeLeaf-Left::Windows::/ChiaTmp','ThreeLeaf-Right::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
-#plotters = ['ThreeLeaf-Right::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/FinChia']
-#--
-plotters = ['192.168.1.50::Windows::ChiaFin/','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
+# For now *Linux* Plotters MUST use wildcard on the plot directory!!
+plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/plot*','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
 # Harvestor Final Plot Directory
 harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
 harvestorPlotArray = []
 
 for plotter in plotters:
     logging.info(getTimeStamp() + ' : ' + plotter)
+    print(getTimeStamp() + ' : ' + plotter)
     # Check if plots new plots exist
     if checkForPlots(getPlotOS(plotter)):
       # If new plots exist, create an array of current plots then copy new ones to the farmer
