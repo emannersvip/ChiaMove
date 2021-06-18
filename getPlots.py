@@ -66,13 +66,12 @@ def copyPlotsToFarmer(os):
         # Check if this plot is already been copied and print it for manual deletion
         print(src_plot)
         if os == 'Linux':
-          #if isStalePlot(getPlotFile(src_plot)):
-          if isStalePlot(src_plot):
-            print(getPlotFile(src_plot) + "... Exists on the Harvestor, skipping. Please delete from Source!")
+          if isStalePlot(getPlotFile(src_plot)):
+            deleteStalePlot(src_plot)
             continue
         elif os == 'Windows':
           if isStalePlot(src_plot):
-            print(src_plot + "... Exists on the Harvestor, skipping. Please delete from Source!")
+            deleteStalePlot(src_plot)
             continue
         # Create command to copy file to Harvestor
         if os == 'Linux':
@@ -112,7 +111,7 @@ def isPlotDirEmpty(os):
     if not num_plots:
         return 1
 
-    # We can't do a grep in Windows so this hack of checkign for plot files after doign a dir on the directory will have to do.
+    # We can't do a grep in Windows so this hack of checking for plot files after doign a dir on the directory will have to do.
     # I should just use this check for Linux in the future since this way works better for both OSes.
     if os == 'Windows':
         parse_result = str(num_plots).split('\\n')
@@ -174,6 +173,16 @@ def checkHarvestorPlotDir(h):
       logging.info(getTimeStamp() + ' : ' + h + ' is missing!')
       logging.info(getTimeStamp() + ' : --------------------------------STOP-------------------------------------')
       exit()
+def deleteStalePlot(i):
+    # We really only rename them
+    logging.debug(getTimeStamp() + ' : Hello from isStalePlot')
+    logging.debug(getTimeStamp() + ' : ' + getPlotFile(i) + "... Exists on the Harvestor, skipping. Deleting from Source!")
+    logging.debug(getTimeStamp() + ' : scp ' + getHost(plotter) + ' "mv ' + i + ' ' + i + '.deleteme"')
+    command='ssh ' + getHost(plotter) + ' "mv ' + i + ' ' + i + '.deleteme"'
+
+    result = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    deleted,err = result.communicate()
+    return
 
 
 #--------------------------- MAIN PART of the Code -------------------------#
@@ -184,7 +193,8 @@ logging.info(getTimeStamp() + ' : --------------------------------START---------
 
 # List of plotters
 # For now *Linux* Plotters MUST use wildcard on the plot directory!!
-plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/plot*','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
+plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/*.plot','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/*.plot']
+#plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/plot*','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
 # Harvestor Final Plot Directory
 harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
 harvestorPlotArray = []
