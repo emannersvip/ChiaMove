@@ -9,7 +9,7 @@
 # sudo apt install smbclient
 # --
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
-from termcolor import colored
+from colorama import Fore, Style
 # https://docs.python.org/3/howto/logging.html
 # https://realpython.com/python-logging/
 import logging
@@ -206,7 +206,7 @@ harvestorPlotArray = []
 for plotter in plotters:
     logging.info(getTimeStamp() + ' : ' + plotter)
     print(getTimeStamp() + ' : ' + plotter)
-    print(colored('hello','red'), colored('world','green'))
+    print(f'This is {Fore.GREEN}color{style.RESET_ALL}!')
     # Check if plots new plots exist
     if checkForPlots(getPlotOS(plotter)):
       # If new plots exist, create an array of current plots then copy new ones to the farmer
