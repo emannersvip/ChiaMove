@@ -212,7 +212,7 @@ init(autoreset=True)
 for plotter in plotters:
     logging.info(getTimeStamp() + ' : ' + plotter)
     print(getTimeStamp() + ' : ' + plotter)
-    print(f'This is {Fore.GREEN}color!')
+    print(f'This is {Fore.GREEN}color{Fore.RESET_ALL}!')
     # Check if plots new plots exist
     if checkForPlots(getPlotOS(plotter)):
       # If new plots exist, create an array of current plots then copy new ones to the farmer
