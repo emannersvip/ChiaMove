@@ -196,9 +196,7 @@ logging.info(getTimeStamp() + ' : --------------------------------START---------
 # List of plotters
 # For now *Linux* Plotters MUST use wildcard on the plot directory!!
 plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/*.plot',
-            '192.168.1.85::Linux::/media/emanners/6270caab-a194-4e22-9d06-2e4b94d09d58/ChiaFin/*.plot',
-            '192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/*.plot']
-#plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/plot*','192.168.1.85::Linux::/media/emanners/822cf109-0675-41f0-a401-3a237d4cdf65/ChiaFin/plot*']
+            '192.168.1.85::Linux::/media/emanners/40f6ed33-7153-40a2-ad49-20eaf9e38c71/ChiaFin/*.plot']
 # Harvestor Final Plot Directory
 harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
 harvestorPlotArray = []
