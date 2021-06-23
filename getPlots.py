@@ -9,7 +9,9 @@
 # sudo apt install smbclient
 # --
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
-from colorama import Fore, Style
+# pip3.8 install colorama
+from colorama import Fore
+from colorama import Style
 # https://docs.python.org/3/howto/logging.html
 # https://realpython.com/python-logging/
 import logging
