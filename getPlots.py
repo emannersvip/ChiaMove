@@ -64,7 +64,7 @@ def copyPlotsToFarmer(os):
     # Check for stale plots then copy the rest
     for src_plot in plot_list:
         # Check if this plot is already been copied and print it for manual deletion
-        print('SRC_PLOT' + src_plot)
+        print('SRC_PLOT' + str(src_plot))
         if os == 'Linux':
           if isStalePlot(getPlotFile(src_plot)):
             deleteStalePlot(src_plot)
@@ -109,7 +109,7 @@ def isPlotDirEmpty(os):
 
     #-- If the return code is valid we can continue to process the plots
     num_plots,err = result.communicate()
-    print('NUM_PLOTS' + num_plots)
+    print('NUM_PLOTS' + str(num_plots))
     if not num_plots:
         return 1
 
