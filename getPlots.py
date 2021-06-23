@@ -9,9 +9,10 @@
 # sudo apt install smbclient
 # --
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
+# https://pypi.org/project/colorama/
 # pip3.8 install colorama
-from colorama import Fore
-from colorama import Style
+from colorama import Fore, init, Style
+
 # https://docs.python.org/3/howto/logging.html
 # https://realpython.com/python-logging/
 import logging
@@ -204,6 +205,9 @@ plotters = ['192.168.1.84::Linux::/mnt/Plots/ChiaFin/*.plot',
 # Harvestor Final Plot Directory
 harvestorPlotDir = checkHarvestorPlotDir('/media/emanners/WindowsChiaFinal/ChiaFinal')
 harvestorPlotArray = []
+
+# Initialise colorama
+init(autoreset=True)
 
 for plotter in plotters:
     logging.info(getTimeStamp() + ' : ' + plotter)
